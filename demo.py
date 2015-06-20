@@ -74,9 +74,9 @@ def main():
                 elif event.key == pygame.K_DOWN:
                     drone.move_down()
                 # turn left / turn right
-                elif event.key == pygame.K_LEFT:
+                elif event.key == pygame.K_LEFT or event.key == pygame.K_q:
                     drone.turn_left()
-                elif event.key == pygame.K_RIGHT:
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_e:
                     drone.turn_right()
                 # speed
                 elif event.key == pygame.K_1:
@@ -99,6 +99,51 @@ def main():
                     drone.speed = 0.9
                 elif event.key == pygame.K_0:
                     drone.speed = 1.0
+        
+        joystick_count = pygame.joystick.get_count()
+        if joystick_count==0:
+            continue
+        for i in range(joystick_count):
+            joystick = pygame.joystick.Joystick(i)
+        joystick.init()
+        landing = joystick.get_button(11)
+        takeoff = joystick.get_button(14)
+        forward = joystick.get_button(0)
+        backward = joystick.get_button(1)
+        left = joystick.get_button(2)
+        right = joystick.get_button(3)
+        turn_left = joystick.get_button(8)
+        turn_right = joystick.get_button(9)
+        move_down = (joystick.get_axis(4)+1)/2.0
+        move_up = (joystick.get_axis(5)+1)/2.0
+        if landing:
+            drone.land()
+        elif takeoff:
+            drone.takeoff()
+        if forward:
+            drone.move_forward()
+        elif backward:
+            drone.move_backward()
+        elif left:
+            drone.move_left()
+        elif right:
+            drone.move_right()
+        elif turn_left:
+            drone.turn_left()
+        elif turn_right:
+            drone.turn_right()
+        elif move_up != 0:
+            speed = drone.speed
+            drone.speed = move_up
+            drone.move_up()
+            drone.speed = speed
+        elif move_down != 0:
+            speed = drone.speed
+            drone.speed = move_down
+            drone.move_down()
+            drone.speed = speed
+        else:
+            drone.hover()
 
         try:
             surface = pygame.image.fromstring(drone.image, (W, H), 'RGB')

@@ -108,11 +108,11 @@ class ARDrone(object):
 
     def turn_left(self):
         """Make the drone rotate left."""
-        self.at(at_pcmd, True, 0, 0, 0, -self.speed)
+        self.at(at_pcmd, True, 0, 0, 0, -0.5)
 
     def turn_right(self):
         """Make the drone rotate right."""
-        self.at(at_pcmd, True, 0, 0, 0, self.speed)
+        self.at(at_pcmd, True, 0, 0, 0, 0.5)
 
     def reset(self):
         """Toggle the drone's emergency state."""
@@ -318,7 +318,10 @@ def at(command, seq, params):
             param_str += ',"'+p+'"'
     msg = "AT*%s=%i%s\r" % (command, seq, param_str)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.sendto(msg, ("192.168.1.1", ARDRONE_COMMAND_PORT))
+    try:
+        sock.sendto(msg, ("192.168.1.1", ARDRONE_COMMAND_PORT))
+    except:
+        pass
 
 def f2i(f):
     """Interpret IEEE-754 floating-point value as signed integer.
